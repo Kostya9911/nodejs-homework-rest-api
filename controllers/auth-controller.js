@@ -82,15 +82,20 @@ const signout = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
+
+  if (!req.file) {
+    throw HttpError(418, "No file ;)");
+  }
+
   const { path: oldPath, filename } = req.file;
   const newPath = path.join(avatarPath, filename);
 
   await fs.rename(oldPath, newPath);
-  const avatarUrl = path.join("public/avatars", filename);
+  const avatarUrl = path.join("avatars", filename);
 
-  Jimp.read(avatarUrl, (error, filename) => {
+  Jimp.read(`public/${avatarUrl}`, (error, filename) => {
     if (error) throw error;
-    filename.resize(250, 250).write(avatarUrl);
+    filename.resize(250, 250).write(`public/${avatarUrl}`);
   });
   await User.findByIdAndUpdate(_id, { avatarUrl });
   res.json({
