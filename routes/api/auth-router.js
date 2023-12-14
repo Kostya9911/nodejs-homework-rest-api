@@ -4,7 +4,11 @@ import authController from "../../controllers/auth-controller.js";
 import { authenticate, isEmptyBody, upload } from "../../middlewares/index.js";
 import { validateBody } from "../../decorators/index.js";
 
-import { userSigninSchema, userSignupSchema } from "../../models/User.js";
+import {
+  userSigninSchema,
+  userSignupSchema,
+  userEmailSchema,
+} from "../../models/User.js";
 
 const authRouter = express.Router();
 
@@ -23,6 +27,13 @@ authRouter.post(
 );
 authRouter.get("/current", authenticate, authController.getCurrent);
 authRouter.post("/logout", authenticate, authController.signout);
+authRouter.get("/verify/:verificationToken", authController.verify);
+authRouter.post(
+  "/verify",
+  isEmptyBody,
+  validateBody(userEmailSchema),
+  authController.resendVerify
+);
 authRouter.patch(
   "/avatars",
   authenticate,
