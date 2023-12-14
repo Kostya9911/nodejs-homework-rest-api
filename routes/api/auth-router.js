@@ -28,7 +28,7 @@ authRouter.post(
 authRouter.get("/current", authenticate, authController.getCurrent);
 authRouter.post("/logout", authenticate, authController.signout);
 authRouter.get("/verify/:verificationToken", authController.verify);
-authRouter.get(
+authRouter.post(
   "/verify",
   isEmptyBody,
   validateBody(userEmailSchema),
